@@ -1,0 +1,13 @@
+services:
+  ollama:
+    build:
+      dockerfile: ollama.Dockerfile
+      args:
+        MODEL_NAME: "llama3.2"
+    volumes:
+      - ollama:/root/.ollama
+    ports:
+      - "11434:11434"
+  
+volumes:
+  ollama:
