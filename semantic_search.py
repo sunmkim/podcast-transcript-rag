@@ -85,7 +85,6 @@ def main():
     with open('data/data.json', 'rt') as f_in:
         docs_raw = json.load(f_in)
 
-
     # turn utterances into vector and store them
     ssearch.add_documents_to_index(docs_raw)
 
