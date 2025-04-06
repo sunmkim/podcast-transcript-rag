@@ -1,2 +1,4 @@
 requests
+jupyter
+python-docx
 langchain-ollama
