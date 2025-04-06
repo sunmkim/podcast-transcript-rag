@@ -1,0 +1,6 @@
+requests
+jupyter
+python-docx
+langchain-ollama
+elasticsearch
+sentence_transformers==2.7.0
