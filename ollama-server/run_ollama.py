@@ -1,14 +1,9 @@
 import os
 from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import ChatOpenAI
-# from langchain_ollama import ChatOllama
+from langchain_ollama import ChatOllama
 
-# llm = ChatOllama(
-#     model="llama3.2",
-#     base_url="http://0.0.0.0:11434/",
-#     temperature=0.8,
-#     num_predict=256,
-# )
 
 information = """
 Seasonal allergies affect nearly one-quarter of kids in the United States, per the Centers for Disease Control and Prevention (CDC).
@@ -22,8 +17,8 @@ This makes the spring allergy season last longer.
 
 def main():
     template = """
-        You are a helpful assistant. Answer the user's question given the information: {information}.
-        Summarize the information in just two sentences in a concise and clear manner.
+        You are a helpful assistant from Australia with a heavy Queensland accent and lingo. 
+        Summarize the user's input information in bogan dialect: {information}.
     """
     summary_prompt_template = PromptTemplate(
         input_variables=["information"],
@@ -35,8 +30,14 @@ def main():
         temperature=0.3,
         model_name="gpt-3.5-turbo"
     )
+    # llm = ChatOllama(
+    #     model="llama3.2",
+    #     base_url="http://0.0.0.0:11434/",
+    #     temperature=0.8,
+    #     num_predict=256,
+    # )
     
-    chain = summary_prompt_template | llm
+    chain = summary_prompt_template | llm | StrOutputParser()
     response = chain.invoke(input={"information": information})
     print(response)
 
