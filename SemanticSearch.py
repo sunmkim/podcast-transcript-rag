@@ -1,4 +1,5 @@
 import json
+import numpy as np
 from elasticsearch import Elasticsearch
 from sentence_transformers import SentenceTransformer
 
@@ -6,11 +7,12 @@ from sentence_transformers import SentenceTransformer
 
 class Search():
     def __init__(self, model_name, index_name, url='http://localhost:9200'):
+        np.float_ = np.float64
         self.url = url
         self.model_name = model_name
         self.index_name = index_name
         self.es_client = Elasticsearch(url)
-        print(self.es_client.info())
+        print('ElasticSearch Client:\n', self.es_client.info())
         print(f"Download {model_name} model from HuggingFace")
         self.pretrained_model = SentenceTransformer(self.model_name)
 
@@ -50,7 +52,7 @@ class Search():
 
         for doc in data_with_vectors:
             try:
-                self.es_client.index(index=self.index_name, document=doc)
+                self.es_client.index(index=self.index_name, document=doc, refresh=True)
             except Exception as e:
                 print(e)
 
@@ -64,35 +66,12 @@ class Search():
             "field": "vector",
             "query_vector": vectors,
             "k": 5,
-            "num_candidates": 20, 
+            "num_candidates": 10, 
         }
         response = self.es_client.search(
             index=self.index_name,
             knn=query,
-            size=5
+            size=5,
+            source=["utterance"]
         )
-        print(response["hits"]["hits"])
-        
-
-
-
-def main():
-    MODEL_NAME = "all-mpnet-base-v2"
-    ssearch = Search(MODEL_NAME, "podcast_transcript")
-
-    # read in data from json file
-    print('Read in data')
-    with open('data/data.json', 'rt') as f_in:
-        docs_raw = json.load(f_in)
-
-    # turn utterances into vector and store them
-    ssearch.add_documents_to_index(docs_raw)
-
-    # perform semantic search with Elasticsearch
-    ssearch.semantic_search("Why is Canada angry at the United States?")
-   
-    
-
-
-if __name__ == "__main__":
-    main()
+        return response["hits"]["hits"]
