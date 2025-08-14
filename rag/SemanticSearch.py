@@ -1,8 +1,6 @@
-import json
 import numpy as np
 from elasticsearch import Elasticsearch
 from sentence_transformers import SentenceTransformer
-
 
 
 class Search():

@@ -43,7 +43,7 @@ def main():
     ssearch.add_documents_to_index(docs_raw)
 
     # perform semantic search with Elasticsearch
-    user_question = "Who is the Premier of Quebec?"
+    user_question = "Why are Canadians angry at the United States?"
     retrieval_info = ssearch.semantic_search(user_question)
 
     # inject results from semantic search into prompt template
