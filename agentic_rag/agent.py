@@ -8,32 +8,14 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.graph import MessagesState
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import ToolNode
-from langchain.tools.retriever import create_retriever_tool
-from langchain_tavily import TavilySearch
-from agents.SemanticSearchRetriever import SemanticSearchRetriever
-from functions import load_documents
+from tools import retriever_tool, tavily_tool
 
 load_dotenv()
 
 class AgentState(TypedDict):
     messages: Annotated[list[AnyMessage], operator.add]
 
-
-lc_documents = load_documents('data/data.json')
-retriever = SemanticSearchRetriever(
-    documents=lc_documents, 
-    k=8
-)
-
 # define tools
-retriever_tool = create_retriever_tool(
-    retriever,
-    "es_retriever",
-    "Retrieves documents from Elasticsearch vector store"
-)
-tavily_tool = TavilySearch(
-    max_results=3
-)
 tools = [retriever_tool, tavily_tool]
 
 # bind tools to LLM
