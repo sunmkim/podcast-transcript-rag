@@ -1,5 +1,4 @@
 import json
-from IPython.display import Image, display
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.documents import Document
@@ -126,11 +125,12 @@ def main():
     user_query = input("Enter your query: ")
     messages = [HumanMessage(content=user_query)]
     messages = graph.invoke({"messages": messages})
+   
     question = messages['messages'][0]
-    answer = messages['messages'][-1]
-    
+    answer = messages['messages'][-1] 
     question.pretty_print()
     answer.pretty_print()
+
 
 if __name__ == '__main__':
     main()
