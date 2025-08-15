@@ -1,6 +1,6 @@
-# Using Open-Source Models
+# Using Local LLMs with Ollama
 
-We can use Ollama to run open-source models rather than closed Anthropic or OpenAI models like GPT-5.
+We can use Ollama to run open-source models locally rather than using closed Anthropic or OpenAI models like GPT-5.
 
 
 # Dockering Ollama Server
