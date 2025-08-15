@@ -17,8 +17,8 @@ class SemanticSearchRetriever(BaseRetriever):
         es_client = Elasticsearch(self.url)
         matching_documents = []
 
-        print('ElasticSearch Client:\n', es_client.info())
-        print(f"Download {self.model_name} model from HuggingFace")
+        print('ElasticSearch Client:\n', es_client.info(), '\n')
+        print(f"Download {self.model_name} model from HuggingFace\n")
         pretrained_model = SentenceTransformer(self.model_name)
         
         embedded_data = self.get_vector_embeddings(pretrained_model, self.documents)
