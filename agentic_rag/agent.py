@@ -1,4 +1,4 @@
-import json
+import os, json
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.documents import Document
@@ -111,15 +111,28 @@ def main():
     workflow.add_node("websearch", ToolNode([tavily_tool]))
     workflow.add_node("generate_answer", generate_answer)
     workflow.set_entry_point("retrieval")
+    workflow.set_finish_point("generate_answer")
 
     # define edges
     workflow.add_edge(START, "retrieval")
     workflow.add_edge("retrieval", "evaluate_docs")
-    workflow.add_conditional_edges("evaluate_docs", lambda state: state["next"])
+    workflow.add_conditional_edges(
+        "evaluate_docs", 
+        lambda state: state["next"], 
+        {
+            "generate_answer": "generate_answer",
+            "websearch": "websearch",
+        }
+    )
     workflow.add_edge("websearch", "generate_answer")
     workflow.add_edge("generate_answer", END)
 
     graph = workflow.compile()
+
+    png_graph = graph.get_graph().draw_mermaid_png()
+    with open("agent_workflow.png", "wb") as f:
+        f.write(png_graph)
+    print(f"Graph saved as 'agent_workflow.png' in {os.getcwd()}")
 
     # call agent and pretty print the results
     user_query = input("Enter your query: ")
