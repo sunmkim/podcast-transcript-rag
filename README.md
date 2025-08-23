@@ -35,6 +35,18 @@ As an avid listener of The Daily podcast from the New York Times, I had an initi
 
 I created 2 RAG projects based on the same knowledge base of data using ElasticSearch: one agentic RAG, and the other non-agentic RAG.
 
+
+## Semantic Search using ElasticSearch
+
+The retrieveal step of the RAG process is being handled by an Elasticsearch vector store running on a local server (not Elastic Cloud). The embedding model being used is `all-mpnet-base-v2`. The document search step of the RAG pipeline can be found in `rag/SemanticSearch.py`, and `agentic_rag/SemanticSearchRetriever.py`. These are nearly identical code. The only difference is that the latter was slightly modified in a wrapper to allow it to be used as a Langchain tool.
+
+At a high-level, the semantic search does the following:
+1) Embeds the text into vectors
+2) Creates an index
+3) Loads the documents into Elasticsearch vector store using the index.
+4) Uses cosine similarity to search for relevant documents.
+
+
 ## How to run
 
 Run the following to run Elasticsearch server:
