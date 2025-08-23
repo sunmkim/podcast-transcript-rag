@@ -31,7 +31,9 @@ Directory:
 
 **Goal**
 
-To create 2 RAG proects based on the same knowledge base of data using ElasticSearch: one agentic RAG, and the other non-agentic RAG.
+As an avid listener of The Daily podcast from the New York Times, I had an initial idea where I wanted to create some kind of a chatbot that could answer questions about the content of The Daily episode based on the podcast transcript. This naturally lends itself to a RAG project.
+
+I created 2 RAG projects based on the same knowledge base of data using ElasticSearch: one agentic RAG, and the other non-agentic RAG.
 
 ## How to run
 
