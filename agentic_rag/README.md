@@ -1,5 +1,8 @@
 # Agentic RAG
 
+**Goal**
+
+
 ## LangGraph Workflow
 
 ![Workflow](../agent_workflow.png)

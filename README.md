@@ -1,7 +1,39 @@
-# podcast-transcript-rag
-My RAG project
+# RAG on Podcast Transcripts
 
-To activate the development environment, run this line: `source .venv/bin/activate`
+Directory:
+
+```
+├── rag
+│   ├── rag.py
+│   ├── SemanticSearch.py
+│   └── README.md
+├── agentic_rag
+│   ├── agent.py
+│   ├── SemanticSearchRetriever.py
+│   ├── tools.py
+│   ├── prompt_templates.py
+│   ├── schema.py
+│   └── README.md
+├── data
+│   ├── raw_data
+│   │   └── the_daily_03_13_2025.docx
+│   ├── data_processing.ipynb
+│   ├── data.json
+│   └── README.md
+├── ollama-server
+│   ├── docker-compose.yaml
+│   ├── ollama.Dockerfile
+│   ├── run_ollama.py
+│   └── README.md
+├── requirements.txt
+└── README.md
+```
+
+**Goal**
+
+To create 2 RAG proects based on the same knowledge base of data using ElasticSearch: one agentic RAG, and the other non-agentic RAG.
+
+## How to run
 
 Run the following to run Elasticsearch server:
 ```
@@ -14,3 +46,5 @@ docker run -it \
     -e "xpack.security.enabled=false" \
     docker.elastic.co/elasticsearch/elasticsearch:8.4.3
 ```
+
+You can run the agentic RAG pipeline by running `python agentic_rag/agent.py`, and the non-agentic rag by running `python rag/rag.py`
