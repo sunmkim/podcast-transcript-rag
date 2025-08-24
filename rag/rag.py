@@ -52,7 +52,8 @@ def main():
         "information": retrieval_info, 
         "user_question": user_question
     })
-    print(response)
+    print("Question:\n", user_question, "\n")
+    print("Answer:\n",response)
 
 if __name__ == "__main__":
     main()

@@ -106,17 +106,3 @@ Zohran Mamdani is the current Democratic candidate for the upcoming New York Cit
 ```
 
 Our agent is smart enough to know to call the Tavily web-search tool upon seeing a question it cannot find answers to in the retrieved documents. Above, we see the tool call followed by a Tool Message.
-```
-================================== Ai Message ==================================
-Tool Calls:
-  tavily_search (call_Fa3HghVu7xqqruOMzjlRQZ4h)
- Call ID: call_Fa3HghVu7xqqruOMzjlRQZ4h
-  Args:
-    query: 2025 New York City mayoral election Democratic nominee who is the Democratic candidate
-    search_depth: advanced
-    time_range: year
-    topic: news
-    include_favicon: True
-================================= Tool Message =================================
-Name: tavily_search
-```
