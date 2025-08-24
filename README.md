@@ -49,7 +49,7 @@ At a high-level, the semantic search does the following:
 
 ## How to run
 
-Run the following to run Elasticsearch server:
+Run the following to run Elasticsearch server in the background:
 ```
 docker run -it \
     --rm \
@@ -61,4 +61,4 @@ docker run -it \
     docker.elastic.co/elasticsearch/elasticsearch:8.4.3
 ```
 
-You can run the agentic RAG pipeline by running `python agentic_rag/agent.py`, and the non-agentic rag by running `python rag/rag.py`
+This will serve up Elasticsearch vector store on `http://localhost:9200`. Now, you can run the agentic RAG pipeline by running `python agentic_rag/agent.py`, and the non-agentic rag by running `python rag/rag.py`

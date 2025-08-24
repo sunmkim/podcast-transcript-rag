@@ -35,8 +35,9 @@ def load_documents(datapath: str) -> list:
 lc_documents = load_documents('data/data.json')
 rag_retriever = SemanticSearchRetriever(documents=lc_documents, k=5)
 
-# instantiat our LLM
+# instantiate our LLM with tool
 llm = init_chat_model(model="gpt-5", model_provider="openai")
+llm_with_tools = llm.bind_tools([tavily_tool])
 
 
 def retrieval(state: AgentState):
@@ -64,7 +65,7 @@ def evaluate_docs(state: AgentState) -> dict:
     # inject question and context to prompt template and call LLM-as-judge
     prompt = EVALUATION_TEMPLATE.format(context=context, question=question)
     response = (
-        llm.with_structured_output(GradeDocuments).invoke(
+        llm_with_tools.with_structured_output(GradeDocuments).invoke(
             [{"role": "user", "content": prompt}]
         )
     )
@@ -76,7 +77,9 @@ def evaluate_docs(state: AgentState) -> dict:
         return { "next": "generate_answer" }
     else:
         print("Next: websearch")
-        return { "next": "websearch" }
+        # invoke Tavily tool-binded LLM with user query if answer not deemed relevant
+        response = llm_with_tools.invoke(state["messages"])
+        return {"messages": [response]}
     
 
 def generate_answer(state: AgentState):
@@ -90,7 +93,7 @@ def generate_answer(state: AgentState):
         template=RAG_TEMPLATE,
     )
     # define our LLM that generates RAG response
-    chain = rag_prompt_template | llm | StrOutputParser()
+    chain = rag_prompt_template | llm_with_tools | StrOutputParser()
 
     # generate answer by injecting relevant context from retrieval
     response = chain.invoke(input={
@@ -100,6 +103,12 @@ def generate_answer(state: AgentState):
 
     return {"messages": [AIMessage(content=response)]}
 
+def continue_to_answer_generation(state: AgentState):
+    messages = state["messages"]
+    last_message = messages[-1]
+    if last_message.tool_calls:
+        return "websearch"
+    return "generate_answer"
 
 def main():        
     # create our graph workflow
@@ -117,12 +126,9 @@ def main():
     workflow.add_edge(START, "retrieval")
     workflow.add_edge("retrieval", "evaluate_docs")
     workflow.add_conditional_edges(
-        "evaluate_docs", 
-        lambda state: state["next"], 
-        {
-            "generate_answer": "generate_answer",
-            "websearch": "websearch",
-        }
+        "evaluate_docs",
+        continue_to_answer_generation,
+        ["generate_answer", "websearch"]
     )
     workflow.add_edge("websearch", "generate_answer")
     workflow.add_edge("generate_answer", END)
@@ -139,11 +145,8 @@ def main():
     messages = [HumanMessage(content=user_query)]
     messages = graph.invoke({"messages": messages})
    
-    question = messages['messages'][0]
-    answer = messages['messages'][-1] 
-    question.pretty_print()
-    answer.pretty_print()
-
+    for m in messages['messages']:
+        m.pretty_print()
 
 if __name__ == '__main__':
     main()

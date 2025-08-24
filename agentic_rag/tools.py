@@ -5,5 +5,6 @@ load_dotenv()
 
 # tool for web-searching with Tavily
 tavily_tool = TavilySearch(
-    max_results=3
+    max_results=3,
+    topic="general"
 )
