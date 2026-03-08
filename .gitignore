@@ -31,7 +31,7 @@ MANIFEST
 .terraform/
 .terraform.*
 *.tfvars
-*.tfstate
+*.tfstate*
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
