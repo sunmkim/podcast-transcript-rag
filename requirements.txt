@@ -1,6 +1,7 @@
 requests
 jupyter
 python-docx
+boto3>=1.28.0
 elasticsearch==8.4.3
 sentence_transformers==2.7.0
 accelerate
