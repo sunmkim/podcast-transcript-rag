@@ -125,3 +125,12 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # kb_client = KnowledgeBase(
+    #     name=BEDROCK_KB_NAME,
+    #     embedding_model=BEDROCK_EMBEDDING_MODEL
+    # )
+    # results = kb_client.query(
+    #     query_text="Who is the new Prime Minister of Canada? Cite your source in the knowledge base.",
+    #     kb_id="OILFBSFZW0"
+    # )
+    # print(results)

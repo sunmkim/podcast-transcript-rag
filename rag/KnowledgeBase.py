@@ -18,6 +18,7 @@ class KnowledgeBase():
         self.embedding_model = embedding_model
         self.bedrock_runtime_client = boto3.client('bedrock-agent-runtime', region_name=region)
         self.bedrock_agent_client = boto3.client('bedrock-agent', region_name=region)
+        self.kb_id = None # set id for knowledge base when created in AWS Bedrock
 
 
     # def create_data_source(self, kb_id: str):
@@ -65,14 +66,41 @@ class KnowledgeBase():
             )
             knowledge_base_id = resp['knowledgeBase']['knowledgeBaseId']
             logger.info(f"✓ Knowledge Base created: {knowledge_base_id}")
+            self.kb_id = knowledge_base_id
             return knowledge_base_id
         
         except Exception as err:
             logger.error(f"Error creating knowledge base: {err}")
             raise
     
-    def query(self, query_text: str):
+    def query(self, query_text: str, kb_id: str, num_results: int = 5) -> List[Dict[str, Any]]:
+        """
+        Queries the knowledge base using the retrieve API.
+
+        Args:
+            query_text (str): The text query to search for
+            kb_id (str): The knowledge base ID to query
+            num_results (int): Number of results to return (default 5)
+
+        Returns:
+            List[Dict[str, Any]]: List of retrieval results with content, location, metadata, and score
+        """
         try:
+            logger.info(f"Querying knowledge base {kb_id} with: {query_text}")
             resp = self.bedrock_runtime_client.retrieve(
-                
+                knowledgeBaseId=kb_id,
+                retrievalQuery={
+                    "text": query_text
+                },
+                retrievalConfiguration={
+                    "vectorSearchConfiguration": {
+                        "numberOfResults": num_results
+                    }
+                }
             )
+            results = resp.get("retrievalResults", [])
+            logger.info(f"Retrieved {len(results)} results")
+            return results
+        except Exception as err:
+            logger.error(f"Error querying knowledge base: {err}")
+            raise
