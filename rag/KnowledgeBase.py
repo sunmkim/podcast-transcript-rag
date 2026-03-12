@@ -21,12 +21,6 @@ class KnowledgeBase():
         self.kb_id = None # set id for knowledge base when created in AWS Bedrock
 
 
-    # def create_data_source(self, kb_id: str):
-    #     resp = self.bedrock_agent_client.create_data_source(
-    #         knowledgeBaseId=kb_id,
-
-    #     )
-
     def create_knowledge_base(self, vector_index_arn: str, role_arn: str) -> str:
         """
         Creates a knowledge base with Amazon S3 Vectors.
