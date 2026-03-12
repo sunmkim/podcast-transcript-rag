@@ -1,59 +1,69 @@
-import json
+import boto3
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_openai import ChatOpenAI
-from SemanticSearch import Search
+from langchain_core.runnables import RunnablePassthrough, RunnableParallel
+from langchain_aws import ChatBedrock
+from langchain_aws.retrievers import AmazonKnowledgeBasesRetriever
 from dotenv import load_dotenv
-
+from constants import (
+    BEDROCK_LLM_MODEL,
+)
 
 load_dotenv()
 
 # define RAG template
 template = """
-    You are a helpful Chatbot assistant. You have the following information available to you:
-    {information}
+    You are a helpful Chatbot assistant. You have the following context available to you:
+    {context}
 
-    Based on the above information, answer this question:
-    {user_question}
+    Based on the above information, answer this question below.:
+    {question}
+
+    Only answer the question and don't add extra context in your answer.
 """
 
 
-def main():
-    rag_prompt_template = PromptTemplate(
-        input_variables=["information", "user_question"],
+def main(knowledgebase_id: str):
+    bedrock_client = boto3.client('bedrock-runtime', region_name="us-east-1")
+    model_kwargs =  { 
+        "max_tokens": 2048,
+        "temperature": 0.0,
+        "top_k": 250,
+        "top_p": 1,
+        "stop_sequences": ["\n\nHuman"],
+    }
+
+    # initialize llm
+    llm = ChatBedrock(
+        client=bedrock_client,
+        model_kwargs=model_kwargs,
+        model_id=BEDROCK_LLM_MODEL,
+    )
+    
+    # instantiate our Bedrock Knowledge Base
+    retriever = AmazonKnowledgeBasesRetriever(
+        knowledge_base_id=knowledgebase_id,
+        retrieval_config={"vectorSearchConfiguration": {"numberOfResults": 3}},
+    )
+
+    # set prompt template
+    prompt = PromptTemplate(
+        input_variables=["context", "question"],
         template=template,
     )
 
-    # initialize llm
-    llm = ChatOpenAI(
-        temperature=0.3,
-        model_name="gpt-3.5-turbo"
+    chain = (
+        RunnableParallel({"context": retriever, "question": RunnablePassthrough()})
+        .assign(response = prompt | llm | StrOutputParser())
+        .pick(["response", "context"])
     )
-    
-    # initialize embedding model
-    MODEL_NAME = "all-mpnet-base-v2"
-    ssearch = Search(MODEL_NAME, "podcast_transcript")
 
-    # read in data from json file
-    print('Read in data')
-    with open('data/data.json', 'rt') as f_in:
-        docs_raw = json.load(f_in)
+    user_question = "What did Wayne Gretzky do that made Canadians dislike him?"
+    answer = chain.invoke(user_question)
 
-    # turn utterances into vector and store them
-    ssearch.add_documents_to_index(docs_raw)
-
-    # perform semantic search with Elasticsearch
-    user_question = "Why are Canadians angry at the United States?"
-    retrieval_info = ssearch.semantic_search(user_question)
-
-    # inject results from semantic search into prompt template
-    chain = rag_prompt_template | llm | StrOutputParser()
-    response = chain.invoke(input={
-        "information": retrieval_info, 
-        "user_question": user_question
-    })
     print("Question:\n", user_question, "\n")
-    print("Answer:\n",response)
+    print("Answer:\n", answer['response'])
 
 if __name__ == "__main__":
-    main()
+    knowledgebase_id = "OILFBSFZW0"
+    main(knowledgebase_id)
