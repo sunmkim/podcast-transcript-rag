@@ -26,7 +26,7 @@ llm_config = {
 }
 
 
-def generate_responses(rag):
+def generate_responses(rag: RAG) -> List:
     responses = []
     for question in EVAL_QUESTIONS:
         result = rag.invoke(question)
@@ -37,7 +37,7 @@ def generate_responses(rag):
     return responses
 
 
-def build_eval_dataset(responses) -> EvaluationDataset:
+def build_eval_dataset(responses: List) -> EvaluationDataset:
     samples = []
     for i, question in enumerate(EVAL_QUESTIONS):
         sample = SingleTurnSample(
