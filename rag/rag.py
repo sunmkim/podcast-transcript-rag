@@ -1,4 +1,5 @@
 import boto3
+from pprint import pprint
 from typing import Dict, Any
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -77,7 +78,10 @@ def main(knowledgebase_id: str):
     answer = rag.invoke(question)
 
     print("Question:\n", question, "\n")
-    print("Answer:\n", answer)
+    print("Answer:\n", answer['response'])
+
+    print("\nContext:")
+    pprint(answer['context'])
 
 if __name__ == "__main__":
     knowledgebase_id = "OILFBSFZW0"
