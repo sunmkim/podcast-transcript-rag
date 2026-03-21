@@ -27,6 +27,7 @@ class RAG():
     def __init__(self, knowledgebase_id: str, model_kwargs: Dict[str, Any] = None, region_name: str = "us-east-1"):
         self.region = region_name
         self.knowledgebase_id = knowledgebase_id
+        self.results_num = 5
         self.bedrock_client = boto3.client('bedrock-runtime', region_name=self.region)
         if not model_kwargs:
             self.model_kwargs = { 
@@ -50,7 +51,7 @@ class RAG():
             knowledge_base_id=self.knowledgebase_id,
             retrieval_config={
                 "vectorSearchConfiguration": {
-                    "numberOfResults": 3, 
+                    "numberOfResults": self.results_num, 
                     "overrideSearchType": "SEMANTIC", # semantic search
                     "rerankingConfiguration": {
                         "type": "BEDROCK_RERANKING_MODEL",
@@ -67,7 +68,7 @@ class RAG():
                                     ]
                                 }
                             },
-                            "numberOfRerankedResults": 3
+                            "numberOfRerankedResults": self.results_num
                         }
                     }
                 }
