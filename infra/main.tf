@@ -42,8 +42,26 @@ data "aws_iam_policy_document" "policy" {
     effect  = "Allow"
     actions = ["bedrock:InvokeModel"]
     resources = [
-      "arn:aws:bedrock:${var.aws_region}::foundation-model/amazon.titan-embed-text-v2:0"
+      "arn:aws:bedrock:${var.aws_region}::foundation-model/amazon.titan-embed-text-v2:0",
+      "arn:aws:bedrock:${var.aws_region}::foundation-model/cohere.rerank-v3-5:0"
     ]
+  }
+
+  statement {
+    sid     = "BedrockRerankPermission"
+    effect  = "Allow"
+    actions = ["bedrock:Rerank"]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "MarketplaceModelAccess"
+    effect = "Allow"
+    actions = [
+      "aws-marketplace:ViewSubscriptions",
+      "aws-marketplace:Subscribe"
+    ]
+    resources = ["*"]
   }
 
   statement {

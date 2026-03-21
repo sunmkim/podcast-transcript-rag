@@ -7,7 +7,7 @@ from langchain_core.runnables import RunnablePassthrough, RunnableParallel
 from langchain_aws import ChatBedrock
 from langchain_aws.retrievers import AmazonKnowledgeBasesRetriever
 from dotenv import load_dotenv
-from .constants import BEDROCK_LLM_MODEL
+from .constants import BEDROCK_LLM_MODEL, KNOWLEDGEBASE_ID, RERANKER_MODEL
 
 load_dotenv()
 
@@ -24,9 +24,10 @@ template = """
 """
 
 class RAG():
-    def __init__(self, knowledgebase_id: str, model_kwargs: Dict[str, Any] = None):
+    def __init__(self, knowledgebase_id: str, model_kwargs: Dict[str, Any] = None, region_name: str = "us-east-1"):
+        self.region = region_name
         self.knowledgebase_id = knowledgebase_id
-        self.bedrock_client = boto3.client('bedrock-runtime', region_name="us-east-1")
+        self.bedrock_client = boto3.client('bedrock-runtime', region_name=self.region)
         if not model_kwargs:
             self.model_kwargs = { 
                 "max_tokens": 2048,
@@ -47,7 +48,30 @@ class RAG():
         # instantiate Bedrock Knowledge Base; use semantic search
         self.retriever = AmazonKnowledgeBasesRetriever(
             knowledge_base_id=self.knowledgebase_id,
-            retrieval_config={"vectorSearchConfiguration": {"numberOfResults": 3, 'overrideSearchType': "SEMANTIC"}},
+            retrieval_config={
+                "vectorSearchConfiguration": {
+                    "numberOfResults": 3, 
+                    "overrideSearchType": "SEMANTIC", # semantic search
+                    "rerankingConfiguration": {
+                        "type": "BEDROCK_RERANKING_MODEL",
+                        # use Cohere reranking model
+                        "bedrockRerankingConfiguration": {
+                            "modelConfiguration": {
+                                "modelArn": f'arn:aws:bedrock:{self.region}::foundation-model/{RERANKER_MODEL}',
+                            },
+                            "metadataConfiguration": {
+                                "selectionMode": "SELECTIVE",
+                                "selectiveModeConfiguration": {
+                                    "fieldsToInclude": [
+                                        {"fieldName": "utterance_text"}
+                                    ]
+                                }
+                            },
+                            "numberOfRerankedResults": 3
+                        }
+                    }
+                }
+            }
         )
 
         # set prompt template
@@ -72,7 +96,7 @@ class RAG():
 
 def main(knowledgebase_id: str):
     rag = RAG(knowledgebase_id)
-    question = "Who is the Prime Minister of Canada? Who did he succeed as Prime Minister?"
+    question = "What's the significance of tariffs in US-Canada relationship?"
 
     rag.init_rag_chain()
     answer = rag.invoke(question)
@@ -80,9 +104,6 @@ def main(knowledgebase_id: str):
     print("Question:\n", question, "\n")
     print("Answer:\n", answer['response'])
 
-    print("\nContext:")
-    pprint(answer['context'])
 
 if __name__ == "__main__":
-    knowledgebase_id = "OILFBSFZW0"
-    main(knowledgebase_id)
+    main(KNOWLEDGEBASE_ID)

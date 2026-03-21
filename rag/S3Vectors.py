@@ -56,7 +56,7 @@ class S3Vectors():
             logger.error(f"Error creating index: {err}")
             raise
     
-    def convert_to_vector(text: str, embedding_model: str = BEDROCK_EMBEDDING_MODEL) -> List[float]:
+    def convert_to_vector(self, text: str, embedding_model: str = BEDROCK_EMBEDDING_MODEL) -> List[float]:
         """
         Convert text to vector embedding using Amazon Bedrock Titan embedding model.
         

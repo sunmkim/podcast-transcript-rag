@@ -3,7 +3,7 @@ import logging
 from dotenv import load_dotenv
 from typing import Any, List, Dict
 from pathlib import Path
-from constants import VECTOR_DIMENSION
+from constants import VECTOR_DIMENSION, RERANKER_MODEL
 load_dotenv()
 
 # Configure logging
@@ -16,6 +16,7 @@ class KnowledgeBase():
         self.name = name
         self.region = region
         self.embedding_model = embedding_model
+        self.reranker_model = RERANKER_MODEL
         self.bedrock_runtime_client = boto3.client('bedrock-agent-runtime', region_name=region)
         self.bedrock_agent_client = boto3.client('bedrock-agent', region_name=region)
         self.kb_id = None # set id for knowledge base when created in AWS Bedrock
@@ -88,7 +89,26 @@ class KnowledgeBase():
                 },
                 retrievalConfiguration={
                     "vectorSearchConfiguration": {
-                        "numberOfResults": num_results
+                        "numberOfResults": num_results,
+                        "overrideSearchType": "SEMANTIC", # semantic search
+                        "rerankingConfiguration": {
+                            # apply reranking with Cohere reranking model
+                            "type": "BEDROCK_RERANKING_MODEL",
+                            "bedrockRerankingConfiguration": {
+                                "modelConfiguration": {
+                                    "modelArn": f'arn:aws:bedrock:{self.region}::foundation-model/{self.reranker_model}',
+                                },
+                                "metadataConfiguration": {
+                                    "selectionMode": "SELECTIVE",
+                                    "selectiveModeConfiguration": {
+                                        "fieldsToInclude": [
+                                            {"fieldName": "utterance_text"}
+                                        ]
+                                    }
+                                },
+                                "numberOfRerankedResults": num_results
+                            }
+                        }
                     }
                 }
             )
