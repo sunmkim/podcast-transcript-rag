@@ -7,7 +7,7 @@ from langchain_core.runnables import RunnablePassthrough, RunnableParallel
 from langchain_aws import ChatBedrock
 from langchain_aws.retrievers import AmazonKnowledgeBasesRetriever
 from dotenv import load_dotenv
-from constants import BEDROCK_LLM_MODEL
+from .constants import BEDROCK_LLM_MODEL
 
 load_dotenv()
 
