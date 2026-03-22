@@ -53,6 +53,7 @@ class RAG():
         # instantiate Bedrock Knowledge Base; use semantic search
         self.retriever = AmazonKnowledgeBasesRetriever(
             knowledge_base_id=self.knowledgebase_id,
+            region_name=self.region,
             retrieval_config={
                 "vectorSearchConfiguration": {
                     "numberOfResults": self.results_num, 
