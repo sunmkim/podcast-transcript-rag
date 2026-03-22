@@ -1,4 +1,4 @@
-# RAG with Elasticsearch
+# RAG with AWS Bedrock
 
 ## Models
 
@@ -7,7 +7,7 @@ Embedding model used to embed our text into vectors is `amazon.titan-embed-text-
 
 ## Chaining with Langchain
 
-The script `create_knowledge_base.py` loads the text data in `data/data.json` into S3 Vectors, and creates a Bedrock Knowledge Base.
+The script `create_knowledge_base.py` loads the text data in `data/<episode-date>.json` into S3 Vectors, and creates a Bedrock Knowledge Base.
 
 The `rag.py` contains our RAG object that creates the RAG chain (using Langchain, of course)
 that uses the AWS Bedrock Knowledge Base as our retriever. The retriever runs a semantic search to fetch relevant documents, and then inject the results into a Langchain prompt template that is chained and invoked to the Claude 3 Haiku model. This will allow the LLM to give back our answer.
