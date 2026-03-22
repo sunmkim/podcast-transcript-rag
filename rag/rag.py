@@ -31,7 +31,7 @@ class RAG():
     def __init__(self, knowledgebase_id: str, model_kwargs: Dict[str, Any] = None, region_name: str = "us-east-1"):
         self.region = region_name
         self.knowledgebase_id = knowledgebase_id
-        self.results_num = 5
+        self.results_num = 7
         self.bedrock_client = boto3.client('bedrock-runtime', region_name=self.region)
         if not model_kwargs:
             self.model_kwargs = { 

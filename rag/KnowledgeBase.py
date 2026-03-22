@@ -68,7 +68,7 @@ class KnowledgeBase():
             logger.error(f"Error creating knowledge base: {err}")
             raise
     
-    def query(self, query_text: str, kb_id: str, num_results: int = 5) -> List[Dict[str, Any]]:
+    def query(self, query_text: str, kb_id: str, num_results: int = 7) -> List[Dict[str, Any]]:
         """
         Queries the knowledge base using the retrieve API.
 
