@@ -3,7 +3,7 @@ import logging
 from dotenv import load_dotenv
 from typing import Any, List, Dict
 from pathlib import Path
-from constants import VECTOR_DIMENSION, RERANKER_MODEL
+from constants import VECTOR_DIMENSION, RERANKER_MODEL, BEDROCK_EMBEDDING_MODEL
 load_dotenv()
 
 # Configure logging
@@ -12,11 +12,11 @@ logger = logging.getLogger(__name__)
 
 
 class KnowledgeBase():
-    def __init__(self, name: str, embedding_model: str, region: str = "us-east-1"):
+    def __init__(self, name: str, embedding_model: str = BEDROCK_EMBEDDING_MODEL, reranker_model: str = RERANKER_MODEL, region: str = "us-east-1"):
         self.name = name
         self.region = region
         self.embedding_model = embedding_model
-        self.reranker_model = RERANKER_MODEL
+        self.reranker_model = reranker_model
         self.bedrock_runtime_client = boto3.client('bedrock-agent-runtime', region_name=region)
         self.bedrock_agent_client = boto3.client('bedrock-agent', region_name=region)
         self.kb_id = None # set id for knowledge base when created in AWS Bedrock

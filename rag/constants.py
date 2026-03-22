@@ -1,10 +1,12 @@
 # constants for AWS Bedrock Knowledge Base
 BEDROCK_KB_NAME = "podcast-transcripts-kb"
+# BEDROCK_KB_NAME = "podcast-transcripts-03-19-2026-kb"
 BEDROCK_KB_CHUNK_SIZE = 512
 KNOWLEDGEBASE_ID = "FEYREV4B6D"
 
 # constants for S3 Vectors
 BEDROCK_VECTOR_BUCKET = "podcast-transcripts"
+# BEDROCK_VECTOR_INDEX_NAME = "podcast-transcripts-03-19-2026-index"
 BEDROCK_VECTOR_INDEX_NAME = "podcast-transcripts-index"
 VECTOR_DIMENSION = 1024
 

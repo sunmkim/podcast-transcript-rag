@@ -9,7 +9,6 @@ from constants import (
     BEDROCK_KB_NAME,
     BEDROCK_VECTOR_BUCKET,
     BEDROCK_VECTOR_INDEX_NAME,
-    BEDROCK_EMBEDDING_MODEL, 
 )
 from KnowledgeBase import KnowledgeBase
 from S3Vectors import S3Vectors
@@ -56,7 +55,7 @@ def main():
         logger.info("AWS Bedrock Knowledge Base Creation for Podcast Transcripts")
         
         # Configuration
-        data_file = Path(__file__).parent.parent / "data" / "data.json"
+        data_file = Path(__file__).parent.parent / "data" / "03_19_2026.json"
         role_arn = os.getenv("BEDROCK_ROLE_ARN")
         
         # Validate configuration
@@ -66,10 +65,7 @@ def main():
         
         s3_vectors = S3Vectors()
 
-        kb_client = KnowledgeBase(
-            name=BEDROCK_KB_NAME,
-            embedding_model=BEDROCK_EMBEDDING_MODEL
-        )
+        kb_client = KnowledgeBase(name=BEDROCK_KB_NAME)
         
         # Step 1: Create S3 vector index
         logger.info("\n[1/4] Creating S3 Vector Index")
