@@ -39,7 +39,9 @@ This RAG system is deveolped on top of AWS Bedrock services, mainly Knowledge Ba
 
 ## How to use
 
-You can access the RAG application (created with Streamlit) at URL [https://podcast-rag1.streamlit.app/](https://podcast-rag1.streamlit.app/). Select an episode from the dropdown options on the left.
+You can access the RAG application (created with Streamlit) at URL [https://podcast-rag1.streamlit.app/](https://podcast-rag1.streamlit.app/). Select an episode from the dropdown options on the left, as shown in the graphic below:
+
+![Streamlit App Screenshot](streamlit_screenshot.png)
 
 ## Semantic Search using S3 Vectors
 
