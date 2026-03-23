@@ -53,3 +53,5 @@ At a high-level, the semantic search does the following:
 3) Creates the Knowledge Base
 
 The Knowledge Base object handles the retrieval with just a few configurations. Each episode is using its own Knowledge Base in AWS.
+
+This RAG system uses Cohere Rerank 3.5 model (powered by Bedrock's Rerank API) to improve our search relevance and content ranking.
